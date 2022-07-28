@@ -1,0 +1,34 @@
+create table Machine(
+id varchar(100) primary key not null,
+name varchar(250) not null,
+linuxVesion varchar(100) not null);
+
+create table Processor(
+id varchar(100) primary key not null,
+name varchar(100) not null,
+machineId varchar(100) references machine(id));
+
+create table Core(
+processorId varchar(100) references processor(id),
+speed decimal(2) not null,
+coreNo int not null,
+cacheSizeKB decimal(2) not null,
+primary key(processorId, coreNo));
+
+create table Process(   
+id varchar(100) primary key,
+processIdSystem int not null,
+name varchar(250) not null,
+machineId varchar(100) references machine(id));
+
+create table ProcessStatus(
+processId varchar(100) references process(id),
+time timestamp not null,
+state varchar(25) not null,
+cpuUtil decimal(8, 2),
+threads int not null,
+primary key(processId, time));
+
+
+
+
