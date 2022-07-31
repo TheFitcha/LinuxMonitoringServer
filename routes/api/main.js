@@ -100,7 +100,7 @@ router.get('/testdb', (req, res) => {
  */
 router.get('/machine', (req, res) => {
     db.any('SELECT * FROM machine')
-        .then((data) => res.send(data))
+        .then((data) => res.send(JSON.stringify(data)))
         .catch((err) => res.send(err));
 })
 

@@ -5,6 +5,9 @@ const uuid = require('uuid');
 const _ = require('underscore');
 
 const app = express();
+const https = require('https');
+const serverCertificate = readFileSync('server_keys/host.cert', 'utf-8');
+const serverPrivateKey = readFileSync('server_keys/host.key', 'utf-8');
 
 // Body Parser Middleware
 app.use(express.json());
@@ -76,4 +79,5 @@ app.use(express.static(path.join(__dirname, 'public')));
 const PORT = process.env.PORT || 5000;
 
 //console.log(app._router.stack);
-app.listen(PORT, () => console.log('http://localhost:' + PORT + '/'));
+var httpsServer = https.createServer({key: serverPrivateKey, cert: serverCertificate}, app);
+httpsServer.listen(PORT, () => console.log('https://localhost:' + PORT + '/'));
