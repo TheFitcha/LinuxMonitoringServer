@@ -34,21 +34,21 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
  *  components:
  *      schema:
  *          Machine:
- *              type: object
+ *              type: body
  *              properties:
  *                  name:
  *                      type: string
  *                  linuxVersion:
  *                      type: string
  *          Processor:
- *               type: object
+ *               type: body
  *               properties:
  *                  name:
  *                      type: string
  *                  machineId:
  *                      type: string
  *          Process:
- *               type: object
+ *               type: body
  *               properties:
  *                  processIdSystem:
  *                      type: string
@@ -57,7 +57,7 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
  *                  machineId:
  *                      type: string
  *          ProcessStatus:
- *               type: object
+ *               type: body
  *               properties:
  *                  processId:
  *                      type: string
@@ -100,7 +100,7 @@ router.get('/testdb', (req, res) => {
  */
 router.get('/machine', (req, res) => {
     db.any('SELECT * FROM machine')
-        .then((data) => res.send(JSON.stringify(data)))
+        .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
 
