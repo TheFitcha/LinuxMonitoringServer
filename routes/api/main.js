@@ -83,7 +83,7 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
  */
 router.get('/testdb', (req, res) => {
     db.one('SELECT $1 as value', 123)
-        .then((data) => res.send(data))
+        .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
 
@@ -125,7 +125,32 @@ router.get('/machine', (req, res) => {
  */
 router.get('/machine/:id', (req, res) => {
     db.one('SELECT * FROM machine WHERE id = $1', req.params.id)
-        .then((data) => res.send(data))
+        .then((data) => res.json(data))
+        .catch((err) => res.send(err));
+})
+
+/**
+ * @swagger
+ * /api/main/machine/{id}:
+ *  get:
+ *      description: Returns registered machine with name
+ *      tags:
+ *        - Machine
+ *      parameters:
+ *        - in: path
+ *          name: name
+ *          required: true
+ *          schema:
+ *              type: string
+ *              minimum: 1
+ *          description: Machine ID
+ *      responses:
+ *          '200':
+ *              description: Successful response
+ */
+ router.get('/machine/:name', (req, res) => {
+    db.one('SELECT * FROM machine WHERE name = $1', req.params.name)
+        .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
 
@@ -142,7 +167,7 @@ router.get('/machine/:id', (req, res) => {
  */
 router.get('/cpuInfo', (req, res) => {
     db.any('SELECT * FROM processor', req.params.id)
-        .then((data) => res.send(data))
+        .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
 
@@ -167,7 +192,7 @@ router.get('/cpuInfo', (req, res) => {
  */
 router.get('/cpuInfo/:id', (req, res) => {
     db.one('SELECT * FROM processor WHERE id = $1', req.params.id)
-        .then((data) => res.send(data))
+        .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
 
@@ -192,7 +217,7 @@ router.get('/cpuInfo/:id', (req, res) => {
  */
 router.get('/processStatus/:id', (req, res) => {
     db.any('SELECT * FROM ProcessStatus WHERE processId = $1', req.params.id)
-        .then((data) => res.send(data))
+        .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
 
@@ -209,7 +234,7 @@ router.get('/processStatus/:id', (req, res) => {
  */
 router.get('/processList', (req, res) => {
     db.any('SELECT * FROM Process')
-        .then((data) => res.send(data))
+        .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
 
