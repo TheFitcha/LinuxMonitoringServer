@@ -10,7 +10,7 @@ machineId varchar(100) references machine(id));
 
 create table Core(
 processorId varchar(100) references processor(id),
-speed decimal(2) not null,
+speed numeric(8, 2) not null,
 coreNo int not null,
 cacheSizeKB decimal(2) not null,
 primary key(processorId, coreNo));

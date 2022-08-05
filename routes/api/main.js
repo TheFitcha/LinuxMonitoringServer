@@ -47,6 +47,17 @@ router.get('/api-docs', swaggerUi.setup(swaggerDocument));
  *                      type: string
  *                  machineId:
  *                      type: string
+ *          Core:
+ *              type: body
+ *              properties:
+ *                  processorId:
+ *                      type: string
+ *                  speed:
+ *                      type: number
+ *                  coreNo:
+ *                      type: integer
+ *                  cacheSizeKB:
+ *                      type: number
  *          Process:
  *               type: body
  *               properties:
@@ -175,7 +186,7 @@ router.get('/cpuInfo', (req, res) => {
  * @swagger
  * /api/main/cpuInfo/{id}:
  *  get:
- *      description: Returns registered processor with id
+ *      description: Returns registered processor with machine id
  *      tags:
  *        - CPU
  *      parameters:
@@ -190,8 +201,8 @@ router.get('/cpuInfo', (req, res) => {
  *          '200':
  *              description: Successful response
  */
-router.get('/cpuInfo/:id', (req, res) => {
-    db.one('SELECT * FROM processor WHERE id = $1', req.params.id)
+router.get('/cpuInfo/:machineId', (req, res) => {
+    db.one('SELECT * FROM processor WHERE machineId = $1', req.params.machineId)
         .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
@@ -200,7 +211,7 @@ router.get('/cpuInfo/:id', (req, res) => {
  * @swagger
  * /api/main/processStatus/{id}:
  *  get:
- *      description: Returns registered process with id
+ *      description: Returns registered process for id
  *      tags:
  *        - Process
  *      parameters:
@@ -210,7 +221,7 @@ router.get('/cpuInfo/:id', (req, res) => {
  *          schema:
  *              type: string
  *              minimum: 1
- *          description: Machine ID
+ *          description: Process ID
  *      responses:
  *          '200':
  *              description: Successful response
@@ -223,17 +234,26 @@ router.get('/processStatus/:id', (req, res) => {
 
 /**
  * @swagger
- * /api/main/processList:
+ * /api/main/processList/{machineId}:
  *  get:
- *      description: Get all info about registered processes
+ *      description: Get all processes associated with machine id
  *      tags:
  *        - Process
+ *      parameters:
+ *        - in: path
+ *          name: machineId
+ *          required: true
+ *          schema:
+ *              type: string
+ *              minimum: 1
+ *          description: Machine ID
  *      responses:
  *          '200':
  *              description: Successful response
  */
-router.get('/processList', (req, res) => {
-    db.any('SELECT * FROM Process')
+router.get('/processList/:machineId', (req, res) => {
+    const machineId = req.params.machineId;
+    db.any('SELECT * FROM Process WHERE machineId=$1', machineId)
         .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
@@ -487,6 +507,90 @@ router.delete('/cpuDelete/:id', (req, res) => {
         .catch((err) => {
             res.send(err);
         })
+})
+
+/**
+ * @swagger
+ * /api/main/cpuCore/{processorId}:
+ *  get:
+ *      description: Get all info about registered core for certain processor
+ *      tags:
+ *        - Core
+ *      responses:
+ *          '200':
+ *              description: Successful response
+ */
+ router.get('/cpuCore/:processorId', (req, res) => {
+    const processorId = req.params.processorId;
+    db.any('SELECT * FROM Core WHERE processorId=$1', processorId)
+        .then((data) => res.json(data))
+        .catch((err) => res.send(err));
+})
+
+/**
+ * @swagger
+ * /api/main/coreRegister:
+ *  post:
+ *      description: Registers new core
+ *      tags:
+ *        - Core
+ *      consumes:
+ *        - application/json
+ *      parameters:
+ *        - in: body
+ *          schema:
+ *              $ref: '#components/schema/Core'
+ *      responses:
+ *          '200':
+ *              description: Successful response
+ */
+ router.post('/coreRegister', (req, res) => {
+    const processorId = req.body.processorId;
+    if(!processorId){
+        res.send("Request did not contain processorId!");
+    }
+    const speed = req.body.speed;
+    if(!speed){
+        res.send("Request did not contain speed!");
+    }
+    const coreNo = req.body.coreNo;
+    if(!coreNo){
+        res.send("Request did not contain coreNo!");
+    }
+    const cacheSizeKB = req.body.cacheSizeKB;
+    if(!cacheSizeKB){
+        res.send("Request did not contain cacheSizeKB!");
+    }
+
+    db.none('INSERT INTO Core(processorId, speed, coreNo, cacheSizeKB) VALUES ($1, $2, $3, $4)', [processorId, speed, coreNo, cacheSizeKB])
+        .then(() => {
+            res.send("New core registered for processor id: " + processorId);
+        })
+        .catch((err) => {
+            res.send(err);
+        })
+})
+
+/**
+ * @swagger
+ * /api/main/cpuCore/{processorId}:
+ *  delete:
+ *      description: Delete core info
+ *      tags:
+ *        - Core
+ *      responses:
+ *          '200':
+ *              description: Successful response
+ */
+ router.delete('/cpuCore/:processorId', (req, res) => {
+    const processorId = req.params.processorId;
+    db.none('DELETE FROM Core WHERE processorId=$1', processorId)
+        .then(() => {
+            res.send("Successfully deleted Machine with id " + idToDelete);
+        })
+        .catch((err) => {
+            res.send(err);
+        });
 })
 
 //router.stack.forEach((el) => console.log(`${el.route.path} -> ${el.route.methods.get ? 'GET' : 'POST'}`));
