@@ -211,7 +211,7 @@ router.get('/cpuInfo/:machineId', (req, res) => {
  * @swagger
  * /api/main/processStatus/{id}:
  *  get:
- *      description: Returns registered process for id
+ *      description: Returns process status for id
  *      tags:
  *        - Process
  *      parameters:
@@ -228,6 +228,31 @@ router.get('/cpuInfo/:machineId', (req, res) => {
  */
 router.get('/processStatus/:id', (req, res) => {
     db.any('SELECT * FROM ProcessStatus WHERE processId = $1', req.params.id)
+        .then((data) => res.json(data))
+        .catch((err) => res.send(err));
+})
+
+/**
+ * @swagger
+ * /api/main/process/{id}:
+ *  get:
+ *      description: Returns registered process for id
+ *      tags:
+ *        - Process
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *              type: string
+ *              minimum: 1
+ *          description: Process ID
+ *      responses:
+ *          '200':
+ *              description: Successful response
+ */
+ router.get('/process/:id', (req, res) => {
+    db.any('SELECT * FROM Process WHERE id = $1', req.params.id)
         .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
