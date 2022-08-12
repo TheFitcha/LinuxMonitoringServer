@@ -6,6 +6,7 @@ const _ = require('underscore');
 
 const app = express();
 const https = require('https');
+//treba izgenerirati kljuceve!
 const serverCertificate = readFileSync('server_keys/host.cert', 'utf-8');
 const serverPrivateKey = readFileSync('server_keys/host.key', 'utf-8');
 
