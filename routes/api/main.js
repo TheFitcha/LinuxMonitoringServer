@@ -1,5 +1,5 @@
 const pgp = require('pg-promise')();
-const db = pgp('postgres://filip:filip123@localhost:5432/statux');
+const db = pgp('postgres://pi:filip123@localhost:5432/statux');
 const uuid = require('uuid');
 
 const express = require('express');
@@ -306,17 +306,18 @@ router.post('/machineRegister', (req, res) => {
     if(!newName){
         res.send("Request did not contain newName!");
     }
-    const newVersion = req.body.version;
+    const newVersion = req.body.linuxVersion;
     if(!newVersion){
         res.send("Request did not contain newVersion!");
     }
 
     db.none('INSERT INTO machine(id, name, linuxVersion) VALUES($1, $2, $3)', [newId, newName, newVersion])
         .then(() => {
-            res.send("New registered machine ID: " + newId);
+            res.send(newId);
         })
         .catch((err) => {
-            res.send(err);
+            res.send(newName+ " "+ newVersion+ " \n "+ err +"\n");
+            //res.send(err);
         })
 })
 
@@ -350,7 +351,7 @@ router.post('/cpuRegister', (req, res) => {
 
     db.none('INSERT INTO processor(id, name, machineId) VALUES ($1, $2, $3)', [newId, name, machineId])
         .then(() => {
-            res.send(`New processor (${name}) registered with id: ${newId}`);
+            res.send(`${newId}`);
         })
         .catch((err) => {
             res.send(err);
@@ -396,7 +397,7 @@ router.post('/processUpdate', (req, res) => {
 
     db.none('INSERT INTO ProcessStatus(processId, time, state, cpuUtil, threads) VALUES ($1, to_timestamp($2/1000), $3, $4, $5)', [processId, time, state, cpuUtil, threads])
         .then(() => {
-            res.send("Updated process id: " + processId);
+            res.send(processId);
         })
         .catch((err) => {
             res.send(err);
@@ -437,7 +438,7 @@ router.post('/processRegister', (req, res) => {
 
     db.none('INSERT INTO Process(id, processIdSystem, name, machineId) VALUES ($1, $2, $3, $4)', [newId, processIdSystem, name, machineId])
         .then(() => {
-            res.send("New process registered with id: " + newId);
+            res.send(newId);
         })
         .catch((err) => {
             res.send(err);
@@ -467,7 +468,7 @@ router.delete('/processDelete/:id', (req, res) => {
     const idToDelete = req.params.id;
     db.none('DELETE FROM Process WHERE id=$1', idToDelete)
         .then(() => {
-            res.send("Successfully deleted process with id " + idToDelete);
+            res.send(idToDelete);
         })
         .catch((err) => {
             res.send(err);
@@ -497,7 +498,7 @@ router.delete('/cpuDelete/:id', (req, res) => {
     const idToDelete = req.params.id;
     db.none('DELETE FROM Processor WHERE id=$1', idToDelete)
         .then(() => {
-            res.send("Successfully deleted Processor with id " + idToDelete);
+            res.send(idToDelete);
         })
         .catch((err) => {
             res.send(err);
@@ -527,7 +528,7 @@ router.delete('/cpuDelete/:id', (req, res) => {
     const idToDelete = req.params.id;
     db.none('DELETE FROM Machine WHERE id=$1', idToDelete)
         .then(() => {
-            res.send("Successfully deleted Machine with id " + idToDelete);
+            res.send(idToDelete);
         })
         .catch((err) => {
             res.send(err);
@@ -589,7 +590,7 @@ router.delete('/cpuDelete/:id', (req, res) => {
 
     db.none('INSERT INTO Core(processorId, speed, coreNo, cacheSizeKB) VALUES ($1, $2, $3, $4)', [processorId, speed, coreNo, cacheSizeKB])
         .then(() => {
-            res.send("New core registered for processor id: " + processorId);
+            res.send(processorId);
         })
         .catch((err) => {
             res.send(err);
@@ -611,11 +612,32 @@ router.delete('/cpuDelete/:id', (req, res) => {
     const processorId = req.params.processorId;
     db.none('DELETE FROM Core WHERE processorId=$1', processorId)
         .then(() => {
-            res.send("Successfully deleted Machine with id " + idToDelete);
+            res.send(idToDelete);
         })
         .catch((err) => {
             res.send(err);
         });
+})
+
+/**
+ * @swagger
+ * /api/main/deleteAllMachines:
+ *  delete:
+ *      description: Deletes all machines
+ *      tags:
+ *        - Machine
+ *      responses:
+ *          '200':
+ *              description: Successful response
+ */
+router.delete('/deleteAllMachines', (req, res) => {
+    db.none('DELETE FROM Machine WHERE 1=1')
+        .then(() => {
+            res.send("Succesfully deleted all machines!");
+        })
+        .catch((err) => {
+            res.send(err);
+        })
 })
 
 //router.stack.forEach((el) => console.log(`${el.route.path} -> ${el.route.methods.get ? 'GET' : 'POST'}`));
