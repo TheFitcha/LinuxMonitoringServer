@@ -387,15 +387,19 @@ router.post('/processUpdate', (req, res) => {
         res.send("Request did not contain state!");
     }
     const cpuUtil = req.body.cpuUtil;
-    if(!cpuUtil){
-        res.send("Request did not contain cpuUtil!");
+    if(cpuUtil === undefined){
+        res.send("Request did not contain cpuUtil!" + cpuUtil);
+    }
+    const memUtil = req.body.memUtil;
+    if(memUtil === undefined){
+        res.send("Request did not contain memUtil!");
     }
     const threads = req.body.threads;
-    if(!threads){
+    if(threads === undefined){
         res.send("Request did not contain threads!");
     }
 
-    db.none('INSERT INTO ProcessStatus(processId, time, state, cpuUtil, threads) VALUES ($1, to_timestamp($2/1000), $3, $4, $5)', [processId, time, state, cpuUtil, threads])
+    db.none('INSERT INTO ProcessStatus(processId, time, state, cpuUtil, memUtil, threads) VALUES ($1, to_timestamp($2/1000), $3, $4, $5, $6)', [processId, time, state, cpuUtil, memUtil, threads])
         .then(() => {
             res.send(processId);
         })
@@ -435,8 +439,12 @@ router.post('/processRegister', (req, res) => {
     if(!machineId){
         res.send("Request did not contain machineId!");
     }
+    const processPath = req.body.processPath;
+    if(!processPath){
+        res.send("Request did not contain processPath!");
+    }
 
-    db.none('INSERT INTO Process(id, processIdSystem, name, machineId) VALUES ($1, $2, $3, $4)', [newId, processIdSystem, name, machineId])
+    db.none('INSERT INTO Process(id, processIdSystem, name, machineId, processPath) VALUES ($1, $2, $3, $4, $5)', [newId, processIdSystem, name, machineId, processPath])
         .then(() => {
             res.send(newId);
         })
