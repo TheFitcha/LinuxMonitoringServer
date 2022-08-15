@@ -550,6 +550,14 @@ router.delete('/cpuDelete/:id', (req, res) => {
  *      description: Get all info about registered core for certain processor
  *      tags:
  *        - Core
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *              type: string
+ *              minimum: 1
+ *          description: Processor ID
  *      responses:
  *          '200':
  *              description: Successful response
@@ -584,15 +592,15 @@ router.delete('/cpuDelete/:id', (req, res) => {
         res.send("Request did not contain processorId!");
     }
     const speed = req.body.speed;
-    if(!speed){
+    if(speed === undefined){
         res.send("Request did not contain speed!");
     }
     const coreNo = req.body.coreNo;
-    if(!coreNo){
+    if(coreNo === undefined){
         res.send("Request did not contain coreNo!");
     }
     const cacheSizeKB = req.body.cacheSizeKB;
-    if(!cacheSizeKB){
+    if(cacheSizeKB === undefined){
         res.send("Request did not contain cacheSizeKB!");
     }
 
@@ -612,6 +620,14 @@ router.delete('/cpuDelete/:id', (req, res) => {
  *      description: Delete core info
  *      tags:
  *        - Core
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *              type: string
+ *              minimum: 1
+ *          description: Processor ID
  *      responses:
  *          '200':
  *              description: Successful response
