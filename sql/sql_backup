@@ -6,10 +6,10 @@ linuxVersion varchar(100) not null);
 create table Processor(
 id varchar(100) primary key not null,
 name varchar(100) not null,
-machineId varchar(100) references machine(id));
+machineId varchar(100) references machine(id) on delete cascade);
 
 create table Core(
-processorId varchar(100) not null references processor(id),
+processorId varchar(100) not null references processor(id) on delete cascade,
 speed numeric(8, 2) not null,
 coreNo int not null,
 cacheSizeKB numeric(8, 2) not null,
@@ -19,11 +19,11 @@ create table Process(
 id varchar(100) primary key,
 processIdSystem int not null,
 name varchar(250) not null,
-machineId varchar(100) references machine(id),
+machineId varchar(100) references machine(id) on delete cascade,
 processPath varchar(100) not null);
 
 create table ProcessStatus(
-processId varchar(100) references process(id),
+processId varchar(100) references process(id) on delete cascade,
 time timestamp not null,
 state varchar(25) not null,
 cpuUtil decimal(8, 2),
@@ -32,7 +32,7 @@ threads int not null,
 primary key(processId, time));
 
 create table Memory(
-    machineId varchar(100) references machine(id),
+    machineId varchar(100) references machine(id) on delete cascade,
     totalPhysicalMemoryKb int not null,
     totalSwapMemoryKb int not null,
     primary key(machineId)
