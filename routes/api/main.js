@@ -142,7 +142,7 @@ router.get('/machine/:id', (req, res) => {
 
 /**
  * @swagger
- * /api/main/machine/{id}:
+ * /api/main/machine/{name}:
  *  get:
  *      description: Returns registered machine with name
  *      tags:
@@ -545,7 +545,7 @@ router.delete('/cpuDelete/:id', (req, res) => {
 
 /**
  * @swagger
- * /api/main/cpuCore/{processorId}:
+ * /api/main/cpuCore/{id}:
  *  get:
  *      description: Get all info about registered core for certain processor
  *      tags:
@@ -615,7 +615,7 @@ router.delete('/cpuDelete/:id', (req, res) => {
 
 /**
  * @swagger
- * /api/main/cpuCore/{processorId}:
+ * /api/main/cpuCore/{id}:
  *  delete:
  *      description: Delete core info
  *      tags:
@@ -636,7 +636,7 @@ router.delete('/cpuDelete/:id', (req, res) => {
     const processorId = req.params.processorId;
     db.none('DELETE FROM Core WHERE processorId=$1', processorId)
         .then(() => {
-            res.send(idToDelete);
+            res.send(processorId);
         })
         .catch((err) => {
             res.send(err);
