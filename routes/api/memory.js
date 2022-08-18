@@ -37,7 +37,7 @@ const router = express.Router();
  */
  router.get('/memory/:machineId', (req, res) => {
     const machineId = req.params.machineId;
-    db.any('SELECT * FROM Memory WHERE machineId=$1', machineId)
+    db.one('SELECT * FROM Memory WHERE machineId=$1', machineId)
         .then((data) => res.json(data))
         .catch((err) => res.send(err));
 })
