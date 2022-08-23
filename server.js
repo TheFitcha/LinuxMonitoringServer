@@ -16,6 +16,9 @@ global.db = pgp('postgres://pi:filip123@localhost:5432/statux');
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
+var morgan = require('morgan');
+app.use(morgan('combined'));
+
 const mainPathRequest = '/api/main';
 // main entry for statux
 app.use(mainPathRequest, require('./routes/api/main'));

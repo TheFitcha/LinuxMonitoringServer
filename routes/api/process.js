@@ -48,7 +48,7 @@ const router = express.Router();
  *          '200':
  *              description: Successful response
  */
- router.get('/processStatus/:id', (req, res) => {
+ router.get('/processDetails/:id', (req, res) => {
     db.any('SELECT * FROM ProcessStatus WHERE processId = $1', req.params.id)
         .then((data) => res.json(data))
         .catch((err) => res.send(err));
@@ -191,6 +191,8 @@ router.post('/processRegister', (req, res) => {
     if(!processPath){
         res.send("Request did not contain processPath!");
     }
+
+    console.log("/processRegister");
 
     db.none('INSERT INTO Process(id, processIdSystem, name, machineId, processPath) VALUES ($1, $2, $3, $4, $5)', [newId, processIdSystem, name, machineId, processPath])
         .then(() => {
