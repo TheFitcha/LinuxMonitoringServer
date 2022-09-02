@@ -35,6 +35,8 @@ create table Memory(
     machineId varchar(100) references machine(id) on delete cascade,
     totalPhysicalMemoryKb int not null,
     totalSwapMemoryKb int not null,
+    freePhysicalMemoryKb int not null,
+    freeSwapMemoryKb int not null,
     primary key(machineId)
 );
 

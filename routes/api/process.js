@@ -48,7 +48,7 @@ const router = express.Router();
  *          '200':
  *              description: Successful response
  */
- router.get('/processDetails/:id', (req, res) => {
+ router.get('/processStatus/:id', (req, res) => {
     db.any('SELECT * FROM ProcessStatus WHERE processId = $1', req.params.id)
         .then((data) => res.json(data))
         .catch((err) => res.send(err));

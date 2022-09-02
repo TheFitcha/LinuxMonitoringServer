@@ -73,7 +73,17 @@ const router = express.Router();
         res.send("Request did not contain totalSwapKb!");
     }
 
-    db.none('INSERT INTO Memory(machineId, totalPhysicalMemoryKb, totalSwapMemoryKb) VALUES ($1, $2, $3)', [machineId, totalPhysicalMemoryKb, totalSwapMemoryKb])
+    const freePhysicalMemoryKb = req.body.freePhysicalMemoryKb;
+    if(freePhysicalMemoryKb === undefined){
+        res.send("Request did not contain freePhysicalMemoryKb!");
+    }
+
+    const freeSwapMemoryKb = req.body.freeSwapMemoryKb;
+    if(freeSwapMemoryKb === undefined){
+        res.send("Request did not contain freeSwapMemoryKb!");
+    }
+
+    db.none('INSERT INTO Memory(machineId, totalPhysicalMemoryKb, totalSwapMemoryKb, freePhysicalMemoryKb, freeSwapMemoryKb) VALUES ($1, $2, $3, $4, $5)', [machineId, totalPhysicalMemoryKb, totalSwapMemoryKb, freePhysicalMemoryKb, freeSwapMemoryKb])
         .then(() => {
             res.send(machineId);
         })
