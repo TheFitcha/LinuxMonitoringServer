@@ -12,7 +12,11 @@ const router = express.Router();
  *                      type: string
  *                  totalPhysicalMemoryKb:
  *                      type: integer
- *                  totalSwapKb:
+ *                  totalSwapMemoryKb:
+ *                      type: integer
+ *                  freePhysicalMemoryKb:
+ *                      type: integer
+ *                  freeSwapMemoryKb:
  *                      type: integer
  */
 
@@ -84,6 +88,57 @@ const router = express.Router();
     }
 
     db.none('INSERT INTO Memory(machineId, totalPhysicalMemoryKb, totalSwapMemoryKb, freePhysicalMemoryKb, freeSwapMemoryKb) VALUES ($1, $2, $3, $4, $5)', [machineId, totalPhysicalMemoryKb, totalSwapMemoryKb, freePhysicalMemoryKb, freeSwapMemoryKb])
+        .then(() => {
+            res.send(machineId);
+        })
+        .catch((err) => {
+            res.send(err);
+        })
+})
+
+/**
+ * @swagger
+ * /api/main/memoryUpdate:
+ *  put:
+ *      description: Update memory for machine
+ *      tags:
+ *        - Memory
+ *      consumes:
+ *        - application/json
+ *      parameters:
+ *        - in: body
+ *          schema:
+ *              $ref: '#components/schema/Memory'
+ *      responses:
+ *          '200':
+ *              description: Successful response
+ */
+ router.put('/memoryUpdate', (req, res) => {
+    const machineId = req.body.machineId;
+    if(machineId === undefined){
+        res.send("Request did not contain machineId!");
+    }
+    
+    const totalPhysicalMemoryKb = req.body.totalPhysicalMemoryKb;
+    if(totalPhysicalMemoryKb === undefined){
+        res.send("Request did not contain totalPhysicalMemoryKb!");
+    }
+    const totalSwapMemoryKb = req.body.totalSwapMemoryKb;
+    if(totalSwapMemoryKb === undefined){
+        res.send("Request did not contain totalSwapKb!");
+    }
+
+    const freePhysicalMemoryKb = req.body.freePhysicalMemoryKb;
+    if(freePhysicalMemoryKb === undefined){
+        res.send("Request did not contain freePhysicalMemoryKb!");
+    }
+
+    const freeSwapMemoryKb = req.body.freeSwapMemoryKb;
+    if(freeSwapMemoryKb === undefined){
+        res.send("Request did not contain freeSwapMemoryKb!");
+    }
+
+    db.none('UPDATE Memory SET totalPhysicalMemoryKb=$1, totalSwapMemoryKb=$2, freePhysicalMemoryKb=$3, freeSwapMemoryKb=$4 WHERE machineId=$5', [totalPhysicalMemoryKb, totalSwapMemoryKb, freePhysicalMemoryKb, freeSwapMemoryKb, machineId])
         .then(() => {
             res.send(machineId);
         })
